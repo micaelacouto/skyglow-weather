@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div id="weather-bg"></div>
+
     <div class="container">
         <h1>SkyGlow</h1>
         <p class="subtitle">Descubra o clima em qualquer lugar</p>
@@ -17,13 +19,13 @@
         </div>
 
         <div id="weatherResult" class="weather-card">
-            <h2 id="cityName">Salvador, Brasil</h2>
+            <h2 id="cityName">--</h2>
             <div class="temp-container">
-                <span id="temperature">27°C</span>
+                <span id="temperature">--°C</span>
             </div>
             <div class="details">
-                <p id="wind">Vento: 14.3 km/h</p>
-                <p id="status">Status: Céu Limpo ☀️</p>
+                <p id="wind">Vento: -- km/h</p>
+                <p id="status">Status: --</p>
             </div>
         </div>
 
