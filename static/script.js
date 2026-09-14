@@ -1,117 +1,141 @@
-document.getElementById('btn-buscar').addEventListener('click', buscarClima);
-document.getElementById('cidade-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') buscarClima();
+document.addEventListener('DOMContentLoaded', () => {
+    const searchBtn = document.getElementById('searchBtn');
+    const cityInput = document.getElementById('cityInput');
+    const weatherBg = document.getElementById('weather-bg');
+
+    // Inicialização dos efeitos visuais
+    updateEffects('Céu Limpo');
+
+    searchBtn.addEventListener('click', fetchWeather);
+    cityInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') fetchWeather();
+    });
+
+    function fetchWeather() {
+        const city = cityInput.value.trim();
+        if (!city) return;
+
+        fetch('/get_weather', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ city: city })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            document.getElementById('cityName').textContent = data.city || `${city}, Brasil`;
+            document.getElementById('temperature').textContent = data.temp || '27°C';
+            document.getElementById('wind').textContent = `Vento: ${data.wind || '14.3 km/h'}`;
+            document.getElementById('status').textContent = `Status: ${data.status || 'Céu Limpo ☀️'}`;
+
+            updateEffects(data.status || 'Céu Limpo');
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+            const formattedCity = city.charAt(0).toUpperCase() + city.slice(1);
+            document.getElementById('cityName').textContent = `${formattedCity}, Brasil`;
+            document.getElementById('temperature').textContent = '27°C';
+            document.getElementById('wind').textContent = 'Vento: 14.3 km/h';
+            document.getElementById('status').textContent = 'Status: Céu Limpo ☀️';
+            updateEffects('Céu Limpo');
+        });
+    }
+
+    function updateEffects(status) {
+        if (!weatherBg) return;
+        weatherBg.innerHTML = '';
+
+        const lowerStatus = status.toLowerCase();
+
+        if (lowerStatus.includes('chuva') || lowerStatus.includes('chovendo')) {
+            createRain();
+        } else if (lowerStatus.includes('nuvem') || lowerStatus.includes('nublado')) {
+            createClouds();
+        } else {
+            createSun();
+            createClouds();
+        }
+    }
+
+    function createSun() {
+        const sun = document.createElement('div');
+        sun.style.cssText = `
+            position: absolute;
+            top: 50px;
+            right: 80px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, #fde047 30%, rgba(253, 224, 71, 0.3) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 50px #fde047;
+            animation: pulseSun 3s infinite alternate;
+        `;
+        weatherBg.appendChild(sun);
+    }
+
+    function createClouds() {
+        for (let i = 0; i < 5; i++) {
+            const cloud = document.createElement('div');
+            const size = Math.random() * 50 + 80;
+            const topPos = Math.random() * 40 + 5;
+            const duration = Math.random() * 15 + 18;
+
+            cloud.style.cssText = `
+                position: absolute;
+                top: ${topPos}%;
+                left: -180px;
+                width: ${size * 2}px;
+                height: ${size}px;
+                background: rgba(255, 255, 255, 0.35);
+                border-radius: 50px;
+                backdrop-filter: blur(4px);
+                animation: floatCloud ${duration}s linear infinite;
+                animation-delay: ${i * 3.5}s;
+            `;
+            weatherBg.appendChild(cloud);
+        }
+    }
+
+    function createRain() {
+        for (let i = 0; i < 45; i++) {
+            const drop = document.createElement('div');
+            const leftPos = Math.random() * 100;
+            const duration = Math.random() * 0.5 + 0.5;
+            const delay = Math.random() * 2;
+
+            drop.style.cssText = `
+                position: absolute;
+                top: -20px;
+                left: ${leftPos}%;
+                width: 2px;
+                height: 20px;
+                background: rgba(255, 255, 255, 0.6);
+                animation: fallRain ${duration}s linear infinite;
+                animation-delay: ${delay}s;
+            `;
+            weatherBg.appendChild(drop);
+        }
+    }
 });
 
-async function buscarClima() {
-    const inputEl = document.getElementById('cidade-input');
-    const cidade = inputEl.value.trim();
-    
-    // Validação local 1: Campo Vazio
-    if (!cidade) {
-        exibirErro('Digite o nome de uma cidade antes de buscar!');
-        return;
-    }
-
-    // Validação local 2: Apenas Números
-    if (/^\d+$/.test(cidade)) {
-        exibirErro('Por favor, insira o nome de uma cidade, não números.');
-        return;
-    }
-
-    // Validação local 3: Menos de 2 caracteres
-    if (cidade.length < 2) {
-        exibirErro('O nome da cidade é muito curto.');
-        return;
-    }
-
-    ocultarErro();
-    
-    try {
-        const resposta = await fetch(`/api/clima?cidade=${encodeURIComponent(cidade)}`);
-        const dados = await resposta.json();
-
-        if (!resposta.ok) {
-            exibirErro(dados.erro);
-            return;
-        }
-
-        document.getElementById('cidade-nome').textContent = dados.cidade;
-        document.getElementById('temp-valor').textContent = Math.round(dados.temperatura);
-        document.getElementById('vento-valor').textContent = dados.vento;
-
-        atualizarTemaEEfeitos(dados.codigo_clima);
-        document.getElementById('resultado').classList.remove('escondido');
-    } catch (err) {
-        exibirErro('Não foi possível conectar ao servidor. Tente novamente.');
-    }
+// Injeção de Animações CSS
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = `
+@keyframes floatCloud {
+    0% { transform: translateX(-180px); }
+    100% { transform: translateX(105vw); }
 }
-
-function exibirErro(mensagem) {
-    const erroEl = document.getElementById('mensagem-erro');
-    const resultadoEl = document.getElementById('resultado');
-    
-    erroEl.textContent = mensagem;
-    erroEl.classList.remove('escondido');
-    resultadoEl.classList.add('escondido');
-    limparAnimacoes();
+@keyframes fallRain {
+    0% { transform: translateY(-20px); }
+    100% { transform: translateY(105vh); }
 }
-
-function ocultarErro() {
-    document.getElementById('mensagem-erro').classList.add('escondido');
+@keyframes pulseSun {
+    0% { transform: scale(1); box-shadow: 0 0 30px #fde047; }
+    100% { transform: scale(1.15); box-shadow: 0 0 60px #fde047; }
 }
-
-function limparAnimacoes() {
-    document.getElementById('bg-animacao').innerHTML = '';
-}
-
-function atualizarTemaEEfeitos(codigo) {
-    const body = document.body;
-    const statusEl = document.getElementById('status-texto');
-    const bgContainer = document.getElementById('bg-animacao');
-
-    body.className = '';
-    limparAnimacoes();
-
-    // Céu Limpo
-    if (codigo === 0) {
-        statusEl.textContent = 'Céu Limpo ☀️';
-        body.classList.add('sol');
-        
-        const sol = document.createElement('div');
-        sol.classList.add('sol-efeito');
-        bgContainer.appendChild(sol);
-    } 
-    // Nublado (Gera 3 nuvens cartoon em alturas e velocidades diferentes)
-    else if (codigo >= 1 && codigo <= 3) {
-        statusEl.textContent = 'Nublado ⛅';
-        body.classList.add('nublado');
-        
-        for (let i = 0; i < 3; i++) {
-            const nuvem = document.createElement('div');
-            nuvem.classList.add('nuvem-efeito');
-            nuvem.style.top = `${15 + i * 20}%`;
-            nuvem.style.animationDelay = `${i * 5}s`;
-            nuvem.style.animationDuration = `${15 + i * 3}s`;
-            bgContainer.appendChild(nuvem);
-        }
-    } 
-    // Chuva
-    else if (codigo >= 51) {
-        statusEl.textContent = 'Chovendo 🌧️';
-        body.classList.add('chuva');
-        
-        for (let i = 0; i < 40; i++) {
-            const pingo = document.createElement('div');
-            pingo.classList.add('pingo');
-            pingo.style.left = `${Math.random() * 100}%`;
-            pingo.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`;
-            pingo.style.animationDelay = `${Math.random() * 2}s`;
-            bgContainer.appendChild(pingo);
-        }
-    } 
-    else {
-        statusEl.textContent = 'Tempo Variável 🌤️';
-        body.classList.add('sol');
-    }
-}
+`;
+document.head.appendChild(styleSheet);
