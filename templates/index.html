@@ -3,41 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyGlow - Clima em Tempo Real</title>
-    <!-- Fonte Poppins do Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    
+    <title>SkyGlow - Previsão do Tempo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
-<body class="tema-padrao">
-    <div id="bg-animacao"></div>
+<body>
+    <div class="container">
+        <h1>SkyGlow 🌤️</h1>
+        <p class="subtitle">Consulte a previsão do tempo</p>
 
-    <div class="card-clima">
-        <header>
-            <h1>SkyGlow</h1>
-            <p>Descubra o clima em qualquer lugar</p>
-        </header>
-
-        <div class="busca-box">
-            <input type="text" id="cidade-input" placeholder="Digite uma cidade..." autocomplete="off">
-            <button id="btn-buscar">Buscar</button>
+        <div class="search-box">
+            <input type="text" id="cityInput" placeholder="Digite a cidade...">
+            <button id="searchBtn">Buscar</button>
         </div>
 
-        <div id="resultado" class="resultado-box escondido">
-            <h2 id="cidade-nome">--</h2>
-            <div class="temperatura-destaque">
-                <span id="temp-valor">--</span>°C
+        <div id="weatherResult" class="weather-card">
+            <h2 id="cityName">--</h2>
+            <div class="temp-container">
+                <span id="temperature">--°C</span>
             </div>
-            <div class="detalhes">
-                <p><strong>Vento:</strong> <span id="vento-valor">--</span> km/h</p>
-                <p><strong>Status:</strong> <span id="status-texto">--</span></p>
-            </div>
+            <p id="description">Digite uma cidade para consultar o clima.</p>
         </div>
-
-        <p id="mensagem-erro" class="erro escondido"></p>
     </div>
+
+    <footer style="margin-top: 40px; text-align: center; padding: 20px; font-family: sans-serif; color: #555;">
+        <p>Desenvolvido por <strong>Micaela</strong> | <a href="https://github.com/micaelacouto" target="_blank" rel="noopener noreferrer" style="color: #007bff; text-decoration: none;">Perfil no GitHub</a></p>
+    </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
