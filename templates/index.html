@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkyGlow - Previsão do Tempo</title>
+    <title>SkyGlow - Clima em Tempo Real</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>SkyGlow 🌤️</h1>
-        <p class="subtitle">Consulte a previsão do tempo</p>
+        <h1>SkyGlow</h1>
+        <p class="subtitle">Descubra o clima em qualquer lugar</p>
 
         <div class="search-box">
             <input type="text" id="cityInput" placeholder="Digite a cidade...">
@@ -17,18 +17,18 @@
         </div>
 
         <div id="weatherResult" class="weather-card">
-            <h2 id="cityName">--</h2>
+            <h2 id="cityName">Salvador, Brasil</h2>
             <div class="temp-container">
-                <span id="temperature">--°C</span>
+                <span id="temperature">27°C</span>
             </div>
-            <p id="description">Digite uma cidade para consultar o clima.</p>
+            <div class="details">
+                <p id="wind">Vento: 14.3 km/h</p>
+                <p id="status">Status: Céu Limpo ☀️</p>
+            </div>
         </div>
 
-        <footer style="margin-top: 30px; text-align: center; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); font-family: sans-serif;">
-            <p style="margin: 0; font-size: 14px; color: #ffffff;">
-                Desenvolvido por <strong style="color: #ffffff;">Micaela</strong> | 
-                <a href="https://github.com/micaelacouto" target="_blank" rel="noopener noreferrer" style="color: #ffffff; text-decoration: underline; font-weight: bold;">Perfil no GitHub</a>
-            </p>
+        <footer>
+            <p>Desenvolvido por <strong>Micaela</strong> | <a href="https://github.com/micaelacouto" target="_blank" rel="noopener noreferrer">Perfil no GitHub</a></p>
         </footer>
     </div>
 
